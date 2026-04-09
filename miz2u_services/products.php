@@ -43,15 +43,18 @@ switch ($method) {
             $prod_id = $_POST['prod_id'];
 
             if ($hasImage) {
-                // Upload new image
+                // Upload new image to S3
                 $imageFile = $_FILES['image'];
-                $targetDir = "images/";
                 $imageName = uniqid() . "_" . basename($imageFile["name"]);
-                $targetPath = $targetDir . $imageName;
+                $tmpPath = $imageFile["tmp_name"];
 
-                if (!move_uploaded_file($imageFile["tmp_name"], $targetPath)) {
+                // Upload to S3
+                $s3Command = "aws s3 cp " . escapeshellarg($tmpPath) . " s3://miz2u-app-assets/images/" . escapeshellarg($imageName) . " --region us-east-1 2>&1";
+                $s3Result = shell_exec($s3Command);
+
+                if (strpos($s3Result, 'upload:') === false) {
                     http_response_code(500);
-                    echo json_encode(["error" => "Failed to upload image"]);
+                    echo json_encode(["error" => "Failed to upload image to S3", "detail" => $s3Result]);
                     exit;
                 }
 
@@ -92,14 +95,16 @@ switch ($method) {
                 $newId = 'P-0001';
             }
 
-            // Upload image
-            $targetDir = "images/";
+            //Upload Image to S3
             $imageName = uniqid() . "_" . basename($imageFile["name"]);
-            $targetPath = $targetDir . $imageName;
+            $tmpPath = $imageFile["tmp_name"];
 
-            if (!move_uploaded_file($imageFile["tmp_name"], $targetPath)) {
+            $s3Command = "aws s3 cp " . escapeshellarg($tmpPath) . " s3://miz2u-app-assets/images/" . escapeshellarg($imageName) . " --region us-east-1 2>&1";
+            $s3Result = shell_exec($s3Command);
+
+            if (strpos($s3Result, 'upload:') === false) {
                 http_response_code(500);
-                echo json_encode(["error" => "Failed to upload image"]);
+                echo json_encode(["error" => "Failed to upload image to S3", "detail" => $s3Result]);
                 exit;
             }
 
