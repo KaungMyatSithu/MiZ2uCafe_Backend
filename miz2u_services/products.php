@@ -18,7 +18,7 @@ switch ($method) {
     case 'GET':
         
         $sql = "SELECT * FROM products";
-        $result = $conn->query($sql);
+        $result = $pod->query($sql);
         $products = [];
 
         if ($result->num_rows > 0) {
@@ -59,11 +59,11 @@ switch ($method) {
                 }
 
                 //with new image
-                $stmt = $conn->prepare("UPDATE products SET name=?, price=?, description=?, image=? WHERE prod_id=?");
+                $stmt = $pod->prepare("UPDATE products SET name=?, price=?, description=?, image=? WHERE prod_id=?");
                 $stmt->bind_param("sdsss", $name, $price, $description, $imageName, $prod_id);
             } else {
                 //without changing image
-                $stmt = $conn->prepare("UPDATE products SET name=?, price=?, description=? WHERE prod_id=?");
+                $stmt = $pod->prepare("UPDATE products SET name=?, price=?, description=? WHERE prod_id=?");
                 $stmt->bind_param("sdss", $name, $price, $description, $prod_id);
             }
 
@@ -86,7 +86,7 @@ switch ($method) {
 
             // Auto Generate ID
             $getIdSql = "SELECT prod_id FROM products ORDER BY prod_id DESC LIMIT 1";
-            $result = $conn->query($getIdSql);
+            $result = $pod->query($getIdSql);
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
                 $lastId = intval(substr($row['prod_id'], 2));
@@ -109,7 +109,7 @@ switch ($method) {
             }
 
             // Insert new product
-            $stmt = $conn->prepare("INSERT INTO products (prod_id, name, price, description, image) VALUES (?, ?, ?, ?, ?)");
+            $stmt = $pod->prepare("INSERT INTO products (prod_id, name, price, description, image) VALUES (?, ?, ?, ?, ?)");
             $stmt->bind_param("ssdss", $newId, $name, $price, $description, $imageName);
 
             if ($stmt->execute()) {
@@ -134,7 +134,7 @@ switch ($method) {
         }
     
         // Delete Image
-        $imageQuery = $conn->prepare("SELECT image FROM products WHERE prod_id=?");
+        $imageQuery = $pod->prepare("SELECT image FROM products WHERE prod_id=?");
         $imageQuery->bind_param("s", $prod_id);
         $imageQuery->execute();
         $imageResult = $imageQuery->get_result();
@@ -146,7 +146,7 @@ switch ($method) {
             }
         }
     
-        $stmt = $conn->prepare("DELETE FROM products WHERE prod_id=?");
+        $stmt = $pod->prepare("DELETE FROM products WHERE prod_id=?");
         $stmt->bind_param("s", $prod_id);
     
         if ($stmt->execute()) {
