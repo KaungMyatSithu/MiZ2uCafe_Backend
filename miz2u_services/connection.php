@@ -1,10 +1,10 @@
 <?php
 // connect.php
 
-define('DB_HOST', 'miz2u-db.cbyme8yi00wr.us-east-1.rds.amazonaws.com');
-define('DB_NAME', 'miz2u_db');
+define('DB_HOST', 'miz2u-db.cvu27ztcpdw4.us-east-1.rds.amazonaws.com');  
+define('DB_NAME', 'miz2udb');
 define('DB_USER', 'admin');
-define('DB_PASS', 'kaungmyat71#');
+define('DB_PASS', 'kaungmyat714');
 
 try {
     $pdo = new PDO(
